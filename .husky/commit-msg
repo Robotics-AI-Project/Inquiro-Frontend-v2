@@ -11,6 +11,6 @@ fi
 # Initialise git-secrets configuration
 git-secrets --register-aws > /dev/null
 
-echo "🔒👀 Scanning sensitive information in commit message"
+echo "🔒 Scanning sensitive information in commit message 👀"
 
 git-secrets --commit_msg_hook -- "$@"
