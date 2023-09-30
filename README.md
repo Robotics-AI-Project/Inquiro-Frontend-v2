@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Prerequisites
 
-- [bun](https://bun.sh)
+- [Bun](https://bun.sh)
 
 ## Getting Started
 

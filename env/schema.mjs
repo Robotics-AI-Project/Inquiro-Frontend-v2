@@ -7,7 +7,7 @@ import { z } from "zod";
  */
 export const serverSchema = z.object({
   BACKEND_URL: z.string().url(),
-  JWT_SECRET: z.string(),
+  JWT: z.string(),
 });
 
 /**
