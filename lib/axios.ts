@@ -9,3 +9,5 @@ instance.interceptors.request.use((config) => {
   config.headers.Authorization = `Bearer ${env.JWT}`;
   return config;
 });
+
+export default instance;
