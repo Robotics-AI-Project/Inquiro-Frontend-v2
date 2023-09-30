@@ -11,7 +11,7 @@ fi
 # Initialise git-secrets configuration
 git-secrets --register-aws > /dev/null
 
-echo "Running git-secrets..."
+echo "Scanning sensitive information in changed files 👀"
 # Scans all files that are about to be committed.
 git-secrets --pre_commit_hook -- "$@"
 
