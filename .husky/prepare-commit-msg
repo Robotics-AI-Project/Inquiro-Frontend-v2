@@ -12,7 +12,7 @@ fi
 # Initialise git-secrets configuration
 git-secrets --register-aws > /dev/null
 
-echo "Scanning sensitive information in merged commits 👀"
+echo "🔒👀 Scanning sensitive information in merged commits"
 # Determines if merging in a commit will introduce tainted history.
 git-secrets --prepare_commit_msg_hook -- "$@"
 
