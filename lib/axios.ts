@@ -1,13 +1,16 @@
 import axios from "axios";
 import { env } from "@/env/server.mjs";
 
-const instance = axios.create({
+export const backendClient = axios.create({
   baseURL: env.BACKEND_URL,
 });
 
-instance.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${env.JWT}`;
-  return config;
+export const nextAPIClient = axios.create({
+  baseURL: window.location.origin,
 });
 
-export default instance;
+backendClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});

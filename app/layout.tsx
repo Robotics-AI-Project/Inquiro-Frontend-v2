@@ -1,4 +1,3 @@
-import SideBar from "@/components/layouts/sidebar";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -20,14 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextTopLoader />
-        <div className="w-screen h-screen">
-          <div className="flex h-full">
-            <SideBar />
-            <div className="h-auto w-full bg-white rounded-3xl m-4 ml-0 overflow-clip">
-              {children}
-            </div>
-          </div>
-        </div>
+        <div className="w-screen h-screen">{children}</div>
       </body>
     </html>
   );

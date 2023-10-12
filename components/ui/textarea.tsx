@@ -1,14 +1,16 @@
+"use client";
+
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import ReactTextareaAutosize, {
+  TextareaAutosizeProps,
+} from "react-textarea-autosize";
 
-export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
-
-const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaAutosizeProps>(
   ({ className, ...props }, ref) => {
     return (
-      <textarea
+      <ReactTextareaAutosize
         className={cn(
           "flex w-full h-auto min-h-[20px] max-h-96 rounded-md border border-input bg-input px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
           className
