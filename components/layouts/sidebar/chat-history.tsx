@@ -12,12 +12,15 @@ const ChatTab = ({ title }: Props) => {
     <Button
       variant="ghost"
       className={cn(
-        "w-full justify-start px-3 py-5"
+        "group w-full justify-start px-3 py-5"
         // "bg-secondary/10 border-2 border-secondary/5"
       )}
     >
       <div className="flex space-x-3 items-center">
-        <MessageSquare size={22} />
+        <MessageSquare
+          size={22}
+          className="group-hover:scale-110 transition-all duration-200 ease-out"
+        />
         <p className="text-base text-start text-ellipsis overflow-hidden whitespace-nowrap w-44 font-light text-white/80">
           {title}
         </p>

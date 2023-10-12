@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 type NavItemProps = {
   icon?: React.ElementType;
@@ -26,38 +27,58 @@ const NavItem = ({ nav, label, icon }: NavItemProps) => {
   };
 
   return (
-    <div className="flex flex-col space-y-1 ">
+    <div className="flex flex-col space-y-1">
       <Button
-        className="text-white w-full justify-between py-6 px-5 font-medium"
+        className="group text-white w-full justify-between py-6 px-5 font-medium"
         variant="ghost"
         onClick={handleMainButtonClick}
       >
         <div className="flex space-x-3">
-          {Icon && <Icon size={22} />}
+          {Icon && (
+            <Icon
+              size={22}
+              className="group-hover:scale-110 transition-all duration-200 ease-out"
+            />
+          )}
           <p className="text-base">{label}</p>
         </div>
         {hasChildren && (
-          <>
-            {!isOpen && <ChevronUp size={22} />}
-            {isOpen && <ChevronDown size={22} />}
-          </>
+          <motion.div
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <ChevronUp size={22} />
+          </motion.div>
         )}
       </Button>
-      {hasChildren && isOpen && (
-        <div className="flex flex-col space-y-2 ml-8">
-          {nav.map((item) => (
-            <Button
-              key={item.label}
-              className="text-white w-full justify-between px-6 font-medium"
-              variant="ghost"
-            >
-              <div className="flex space-x-3">
-                <p className="text-base">{item.label}</p>
-              </div>
-            </Button>
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {hasChildren && isOpen && (
+          <motion.div
+            className="flex flex-col space-y-2 ml-8"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.1 * nav.length + 0.025, ease: "easeOut" }}
+          >
+            {nav.map((item, i) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ delay: 0.05 * (i + 1) }}
+              >
+                <Button
+                  className="text-white w-full justify-between px-6 font-medium"
+                  variant="ghost"
+                >
+                  <p className="text-base">{item.label}</p>
+                </Button>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
