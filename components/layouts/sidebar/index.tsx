@@ -8,6 +8,7 @@ import { getUser } from "@/services/user.service";
 
 const SideBar = async () => {
   const session = await getUser();
+  console.log(session);
   return (
     <aside className="flex flex-col justify-between items-center py-10 px-8 w-80">
       <div className="space-y-12">

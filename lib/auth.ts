@@ -2,6 +2,7 @@ import { DefaultSession, DefaultUser, NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { type DefaultJWT } from "next-auth/jwt";
 import { env } from "@/env/server.mjs";
+import { whitelistedEmails } from "@/constants/whitelist";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -49,6 +50,13 @@ export const authOptions: NextAuthOptions = {
     },
     session: async ({ session, token }) => {
       return { ...session, ...token };
+    },
+    signIn: async ({ user }) => {
+      return (
+        // Only whitelist on production
+        env.NODE_ENV !== "production" ||
+        whitelistedEmails.includes(user.email ?? "")
+      );
     },
   },
   secret: env.NEXTAUTH_SECRET ?? "",

@@ -23,10 +23,11 @@ const Profile = ({ image, name }: Props) => {
     }
     setLoading(false);
   };
+
   return (
     <div className="flex w-full justify-between items-center">
       <Avatar>
-        <AvatarImage src={image || ""} />
+        <AvatarImage src={image ?? ""} referrerPolicy="no-referrer" />
         <AvatarFallback>{name?.[0]}</AvatarFallback>
       </Avatar>
       <Button variant="ghost" className="text-white" onClick={handleSignOut}>
