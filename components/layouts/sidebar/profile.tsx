@@ -15,7 +15,7 @@ const Profile = ({ image, name }: Props) => {
   const handleSignOut = async () => {
     setLoading(true);
     try {
-      signOut({
+      await signOut({
         callbackUrl: "/",
       });
     } catch (error) {
