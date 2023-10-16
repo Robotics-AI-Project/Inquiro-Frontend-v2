@@ -25,7 +25,7 @@ const Profile = ({ image, name }: Props) => {
   };
 
   return (
-    <div className="flex w-full justify-between items-center">
+    <div className="flex flex-grow-0 w-full justify-between items-center">
       <Avatar>
         <AvatarImage src={image ?? ""} referrerPolicy="no-referrer" />
         <AvatarFallback>{name?.[0]}</AvatarFallback>

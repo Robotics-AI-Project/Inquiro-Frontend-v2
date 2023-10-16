@@ -19,7 +19,7 @@ const Footer = (props: Props) => {
             className="resize-none px-5"
             minRows={1}
             maxRows={4}
-            placeholder="Send a message here"
+            placeholder="Send a Message Here"
             value={text}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
