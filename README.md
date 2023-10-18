@@ -24,6 +24,12 @@ After that, install dependencies.
 bun install
 ```
 
+Secondly, set git config to recursively pull all submodules
+
+```
+git config --global submodule.recurse true
+```
+
 ## Getting Started
 
 First, run the development server:
