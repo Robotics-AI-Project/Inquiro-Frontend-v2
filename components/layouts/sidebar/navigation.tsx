@@ -1,37 +1,40 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Database,
-  ChevronDown,
-  ChevronUp,
-  LayoutDashboard,
-} from "lucide-react";
+import { ChevronUp } from "lucide-react";
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { navSidebar } from "@/constants/nav";
+import Link from "next/link";
 
 type NavItemProps = {
   icon?: React.ElementType;
   label: string;
-  nav: string | NavItemProps[];
+  nav: string;
 };
 
 const NavItem = ({ nav, label, icon }: NavItemProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // const router = useRouter();
+  const pathname = usePathname();
   const Icon = icon;
 
-  const hasChildren = Array.isArray(nav);
+  // const hasChildren = Array.isArray(nav);
 
-  const handleMainButtonClick = () => {
-    setIsOpen((open) => !open);
-  };
+  // const handleMainButtonClick = () => {
+  //   if (typeof nav === "string") router.push(nav);
+  //   else setIsOpen((open) => !open);
+  // };
 
   return (
-    <div className="flex flex-col space-y-1">
+    <Link className="flex flex-col" href={nav}>
       <Button
-        className="group text-white w-full justify-between py-6 px-5 font-medium"
+        className={cn(
+          "group text-white w-full justify-between py-6 px-5 font-medium",
+          pathname === nav ? "bg-accent/10" : ""
+        )}
         variant="ghost"
-        onClick={handleMainButtonClick}
       >
         <div className="flex space-x-3">
           {Icon && (
@@ -42,16 +45,16 @@ const NavItem = ({ nav, label, icon }: NavItemProps) => {
           )}
           <p className="text-base">{label}</p>
         </div>
-        {hasChildren && (
+        {/* {hasChildren && (
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <ChevronUp size={22} />
           </motion.div>
-        )}
+        )} */}
       </Button>
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {hasChildren && isOpen && (
           <motion.div
             className="flex flex-col space-y-2 ml-8"
@@ -78,35 +81,19 @@ const NavItem = ({ nav, label, icon }: NavItemProps) => {
             ))}
           </motion.div>
         )}
-      </AnimatePresence>
-    </div>
+      </AnimatePresence> */}
+    </Link>
   );
 };
 
-const NavCollapsible = () => {
+const Navigation = () => {
   return (
     <div className="flex flex-col w-full space-y-1">
-      <NavItem
-        nav={[
-          {
-            label: "Add Data Source",
-            nav: "/datasource/add",
-          },
-          {
-            label: "Your Data Source",
-            nav: "/datasource",
-          },
-        ]}
-        label="Data Source"
-        icon={Database}
-      />
-      <NavItem
-        nav="/dashboard"
-        label="Data Dashboards"
-        icon={LayoutDashboard}
-      />
+      {navSidebar.map((item) => (
+        <NavItem key={item.nav} {...item} />
+      ))}
     </div>
   );
 };
 
-export default NavCollapsible;
+export default Navigation;

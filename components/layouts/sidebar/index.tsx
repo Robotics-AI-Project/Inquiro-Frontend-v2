@@ -1,5 +1,5 @@
 import React from "react";
-import NavCollapsible from "./nav-collapsible";
+import Navigation from "./navigation";
 import { Separator } from "@/components/ui/separator";
 import ChatHistory from "./chat-history";
 import Header from "./header";
@@ -14,7 +14,7 @@ const SideBar = async () => {
       <div className="space-y-12">
         <Header />
         <div className="space-y-4 w-full">
-          <NavCollapsible />
+          <Navigation />
           <Separator />
           <ChatHistory />
         </div>

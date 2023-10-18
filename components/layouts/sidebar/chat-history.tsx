@@ -1,9 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { MessageSquare, Plus, Trash2 } from "lucide-react";
+import { MessageSquare, Plus } from "lucide-react";
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 type Props = {
   title: string;
@@ -38,16 +39,13 @@ const ChatTab = ({ title }: Props) => {
 };
 
 const ChatHistory = () => {
+  const router = useRouter();
   const [chat, setChat] = useState([
     "Q2 Original Selling Plans",
     "Top 5 movies in 2023",
   ]);
   const handleNewChat = () => {
-    setChat((prev) => [
-      // random loerm generator
-      "Q" + String(Math.floor(Math.random() * 100)),
-      ...prev,
-    ]);
+    router.push("/app");
   };
   return (
     <div className="flex flex-col flex-auto w-full space-y-1 justify-start items-center text-white overflow-scroll">
