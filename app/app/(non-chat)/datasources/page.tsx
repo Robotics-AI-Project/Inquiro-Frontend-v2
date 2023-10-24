@@ -1,13 +1,5 @@
+import DatasourceTable from "@/components/pages/datasource/table";
 import { Button } from "@/components/ui/button";
-import {
-  TableCaption,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  Table,
-} from "@/components/ui/table";
 import { ROUTES } from "@/constants/nav";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
@@ -33,26 +25,7 @@ const Datasource = (props: Props) => {
           </Button>
         </Link>
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>NAME</TableHead>
-            <TableHead>ENGINE</TableHead>
-            <TableHead>CREATED</TableHead>
-            <TableHead>ACTIONS</TableHead>
-          </TableRow>
-        </TableHeader>
-        {/* <TableBody>
-          <TableRow>
-            <div className="flex w-full justify-center py-2 bg-red-50">
-              <p>Hello</p>
-            </div>
-          </TableRow>
-        </TableBody> */}
-      </Table>
-      <div className="flex w-full justify-center font-light">
-        <p>No data sources.</p>
-      </div>
+      <DatasourceTable />
     </div>
   );
 };

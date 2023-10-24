@@ -1,19 +1,29 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 import React, { useState } from "react";
 
-type Props = {};
+type Props = {
+  onSubmit?: (text: string) => Promise<unknown>;
+};
 
-const Footer = (props: Props) => {
-  const [text, setText] = useState<string>();
+const Footer = ({ onSubmit }: Props) => {
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const onClick = async () => {
+    setLoading(true);
+    try {
+      await onSubmit?.(text);
+      setText("");
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
+  };
   return (
-    <div className="flex flex-col flex-grow-0 flex-shrink-0 h-32 justify-end items-center space-y-2 pb-8">
-      <div
-        className="flex space-x-2 items-end w-3/5
-      "
-      >
+    <div className="relative z-50 flex flex-col flex-grow-0 flex-shrink-0 h-28 max-h-max justify-end items-center space-y-2 pb-4 bg-gradient-to-t from-white via-white/30">
+      <div className="flex h-max space-x-2 items-end w-3/5">
         <div className="flex items-center justify-center h-full w-full bg-input rounded-md placeholder:text-gray-300">
           <Textarea
             className="resize-none px-5"
@@ -33,8 +43,9 @@ const Footer = (props: Props) => {
         <Button
           className="pl-[10px] pr-3 transition-all duration-150"
           disabled={!text || text.length === 0}
+          onClick={onClick}
         >
-          <Send />
+          {loading ? <Loader2 className="animate-spin" /> : <Send />}
         </Button>
       </div>
       <p className="text-gray-400 text-sm">

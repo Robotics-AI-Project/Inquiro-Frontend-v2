@@ -1,7 +1,12 @@
 import { Database, Save, LayoutDashboard } from "lucide-react";
 
 export enum ROUTES {
+  SIGN_IN = "/",
+
+  // CHAT
+
   NEW_CHAT = "/app",
+  CHAT = "/app/chat/[chatId]",
 
   DASHBOARD = "/app/dashboard",
 

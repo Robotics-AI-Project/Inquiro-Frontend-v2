@@ -1,16 +1,19 @@
-import { DefaultSession, DefaultUser, NextAuthOptions } from "next-auth";
+import { DefaultSession, NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { type DefaultJWT } from "next-auth/jwt";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { prisma } from "@/lib/prisma";
 import { env } from "@/env/server.mjs";
 import { whitelistedEmails } from "@/constants/whitelist";
+import { decode } from "next-auth/jwt";
 
 declare module "next-auth" {
-  interface Session extends DefaultSession {
-    email: string;
-  }
-
-  interface User extends DefaultUser {
-    username: string; // the user will now have the property
+  interface Session {
+    user: {
+      userId?: string | null;
+      provider?: string | null;
+      providerAccountId?: string | null;
+    } & DefaultSession["user"];
   }
 }
 
@@ -45,24 +48,29 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    jwt: async ({ token, user }) => {
-      return { ...token, ...user };
-    },
-    session: async ({ session, token }) => {
-      return { ...session, ...token };
-    },
+    // session: async ({ session, user }) => {
+    //   const account = await prisma.account.findFirst({
+    //     where: {
+    //       userId: user.id,
+    //     },
+    //   });
+
+    //   if (account) {
+    //     session.user.userId = account.userId;
+    //     session.user.provider = account.provider;
+    //     session.user.providerAccountId = account.providerAccountId;
+    //   }
+
+    //   return { ...session };
+    // },
     signIn: async ({ user }) => {
       return (
-        // Only whitelist on production
         env.NODE_ENV !== "production" ||
         whitelistedEmails.includes(user.email ?? "")
       );
     },
   },
   secret: env.NEXTAUTH_SECRET ?? "",
-  session: {
-    strategy: "jwt",
-  },
   pages: {
     signIn: "/",
   },

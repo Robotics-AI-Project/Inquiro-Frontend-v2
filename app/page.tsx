@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { signIn } from "@/lib/firebase-auth";
 import { Loader2 } from "lucide-react";
-import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 export default function Home() {
@@ -10,11 +10,13 @@ export default function Home() {
   const handleSignIn = async () => {
     try {
       setLoading(true);
-      await signIn("google", {
-        callbackUrl: `/app`,
+      await signIn({
+        method: "GOOGLE",
       });
     } catch (error) {
       console.log("home error:", error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -22,7 +24,7 @@ export default function Home() {
       <div className="flex h-96 w-96 bg-white justify-center items-center">
         <Button onClick={handleSignIn}>
           {loading ? (
-            <Loader2 className="animate-spin" />
+            <Loader2 className="animate-spin" size={24} />
           ) : (
             <p>Sign in with google</p>
           )}

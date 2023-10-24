@@ -1,14 +1,12 @@
+"use client";
+import { AuthContextProvider } from "@/components/context/auth-context";
 import "./globals.css";
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
+import QueryClientContext from "@/components/context/query-context";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Inquiro",
-  description: "Inquiro Text-to-SQL Solution",
-};
 
 export default function RootLayout({
   children,
@@ -19,7 +17,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextTopLoader />
-        <div className="w-screen h-screen">{children}</div>
+        <QueryClientContext>
+          <AuthContextProvider>
+            <div className="w-screen h-screen">{children}</div>
+          </AuthContextProvider>
+        </QueryClientContext>
+        <Toaster />
       </body>
     </html>
   );

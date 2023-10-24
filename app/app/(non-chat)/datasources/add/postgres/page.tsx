@@ -16,6 +16,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+import { backendClient } from "@/lib/axios";
+import { ROUTES } from "@/constants/nav";
+import { Loader2 } from "lucide-react";
 
 type Props = {};
 
@@ -24,24 +28,40 @@ enum ConnectionType {
   URL = "URL",
 }
 
+type FormProps = {
+  onSubmit: (data: { name: string; url: string }) => Promise<void>;
+};
+
 const credentialsFormSchema = z.object({
-  host: z.string().url().ip(),
-  port: z.number(),
+  name: z.string(),
+  port: z.number().int().positive(),
+  host: z.string().url().or(z.string().ip()),
   username: z.string(),
   password: z.string(),
   database: z.string(),
 });
 
 const urlFormSchema = z.object({
-  url: z.string().url(),
+  name: z.string(),
+  url: z
+    .string()
+    .regex(
+      /^postgres:\/\/(?<username>[^:]+):(?<password>[^@]+)@(?<host>[^:]+):(?<port>[^\/]+)\/(?<database>.*)$/
+    ),
 });
 
-const CredentialsForm = () => {
+const CredentialsForm = (props: FormProps) => {
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof credentialsFormSchema>>({
     resolver: zodResolver(credentialsFormSchema),
   });
-  function onSubmit(values: z.infer<typeof credentialsFormSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof credentialsFormSchema>) {
+    setLoading(true);
+    await props.onSubmit({
+      name: values.name,
+      url: `postgres://${values.username}:${values.password}@${values.host}:${values.port}`,
+    });
+    setLoading(false);
   }
   return (
     <Form {...form}>
@@ -49,6 +69,19 @@ const CredentialsForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-4"
       >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="My Datasource" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="host"
@@ -85,7 +118,12 @@ const CredentialsForm = () => {
             <FormItem>
               <FormLabel>Port</FormLabel>
               <FormControl>
-                <Input placeholder="Port" {...field} />
+                <Input
+                  type="number"
+                  placeholder="Port"
+                  {...field}
+                  onChange={(event) => field.onChange(+event.target.value)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -111,33 +149,50 @@ const CredentialsForm = () => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="Password" {...field} />
+                <Input type="password" placeholder="Password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button type="submit" className="px-6 mt-4 w-max">
-          Connect
+          {loading && <Loader2 className="animate-spin" />}
+          {!loading && <p>Connect</p>}
         </Button>
       </form>
     </Form>
   );
 };
 
-const UrlForm = () => {
+const UrlForm = (props: FormProps) => {
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof urlFormSchema>>({
     resolver: zodResolver(urlFormSchema),
   });
-  function onSubmit(values: z.infer<typeof urlFormSchema>) {
-    console.log(values);
+  async function onFormSubmit(values: z.infer<typeof urlFormSchema>) {
+    setLoading(true);
+    await props.onSubmit(values);
+    setLoading(false);
   }
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onFormSubmit)}
         className="flex flex-col gap-4"
       >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="My Datasource" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="url"
@@ -145,14 +200,18 @@ const UrlForm = () => {
             <FormItem>
               <FormLabel>URL</FormLabel>
               <FormControl>
-                <Input placeholder="URL" {...field} />
+                <Input
+                  placeholder="postgres://username:password@host:port/database"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button type="submit" className="px-6 mt-4 w-max">
-          Connect
+          {loading && <Loader2 className="animate-spin" />}
+          {!loading && <p>Connect</p>}
         </Button>
       </form>
     </Form>
@@ -163,6 +222,16 @@ const Page = (props: Props) => {
   const [connectionType, setConnectionType] = useState<ConnectionType>(
     ConnectionType.CREDENTIALS
   );
+  const router = useRouter();
+
+  const onSubmit = async (data: { name: string; url: string }) => {
+    await backendClient.post("/api/datasource", {
+      name: data.name,
+      url: data.url,
+      engine: "POSTGRES",
+    });
+    router.push(ROUTES.DATASOURCE);
+  };
 
   return (
     <div className="space-y-10">
@@ -194,8 +263,12 @@ const Page = (props: Props) => {
         </div>
       </RadioGroup>
       <div className="w-[40%] min-w-[400px]">
-        {connectionType === ConnectionType.CREDENTIALS && <CredentialsForm />}
-        {connectionType === ConnectionType.URL && <UrlForm />}
+        {connectionType === ConnectionType.CREDENTIALS && (
+          <CredentialsForm onSubmit={onSubmit} />
+        )}
+        {connectionType === ConnectionType.URL && (
+          <UrlForm onSubmit={onSubmit} />
+        )}
       </div>
     </div>
   );
